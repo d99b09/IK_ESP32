@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>ESP32 IK server</title>
+    </head>
+    <body>
+		<h1>ESP32 IK server</h1>
+        <form method="get" action="index.html">
+			<p>x:&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" name="x"/></p>
+			<p>z:&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" name="y"/></p>
+            <p>alfa:<input type="text" name="alf"/></p>          
+            <p><input type="submit" value="Calculate" /></p>
+        </form>
+		<form>
+            <p>
+                <label for="price">q1:</label> 
+                -180<input type="range" step="1" min="-180" max="180" value="0" id="q1" name="q1"/>180
+            </p>
+			<p>
+                <label for="price">q2:</label> 
+                -180<input type="range" step="1" min="-180" max="180" value="0" id="q2" name="q2"/>180
+            </p>
+			<p>
+                <label for="price">q3:</label> 
+                -180<input type="range" step="1" min="-180" max="180" value="0" id="q3" name="q1"/>180
+            </p>
+			
+            <p>
+                <button type="submit">Set</button>
+            </p>
+        </form>
+		<button type="submit">Move it</button>
+    </body>
+</html>

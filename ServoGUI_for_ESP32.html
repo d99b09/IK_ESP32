@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ServoGUI</title>
+  <style>
+    .slider {
+      width: 300px;
+    }
+	.inputwindow{
+	  width: 30px;
+	
+	}
+	
+  </style>  
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+</head>
+<body>
+  <h1>ServoGUI with ESP32</h1>  
+  <div>
+	<h2>Set joint position</h2>
+	<p>q1:<input type="range" min="-180" max="180" id="rq1" onchange="set_iq1()" class="slider"/>
+	<input type="text" id="iq1" class="inputwindow" value="0" onchange="set_rq1()">, град.
+	</p>
+	<p>q2:<input type="range" min="-180" max="180" id="rq2" onchange="set_iq2()" class="slider"/>
+	<input type="text" id="iq2" class="inputwindow" value="0" onchange="set_rq2()">, град.
+	</p>
+    <p>q3:<input type="range" min="-180" max="180" id="rq3" onchange="set_iq3()" class="slider"/>
+	<input type="text" id="iq3" class="inputwindow" value="0" onchange="set_rq3()">, град.
+	</p>
+	<p><input type="button" value="Set joint" onclick="set_joint()"/></p>
+  
+  
+  </div>
+      
+  <div>
+	<h2>Inverse kinematics solution</h2>
+	<p>x:<input type="range" min="-454" max="454" id="rx" onchange="set_ix()" class="slider"/>
+	<input type="text" id="ix"  class="inputwindow" value="0" onchange="set_rx()">, мм
+	</p>
+	<p>z:<input type="range" min="0" max="497" id="rz" value="497" onchange="set_iz()" class="slider"/>
+	<input type="text" id="iz"  class="inputwindow" value="497" onchange="set_rz()">, мм
+	</p>
+    <p>α:<input type="range" min="-180" max="180" id="ralf" onchange="set_ialf()" class="slider"/>
+	<input type="text" id="ialf" class="inputwindow" value="0" onchange="set_ralf()">, град.
+	</p>
+	<p><input type="button" value="IK solution" onclick="ik_solution()"/></p>
+  
+  
+  </div>
+  <div>
+    <p><input type="button" value="Up" onclick="get_up()"/></p>
+	<p><input type="button" value="Down" onclick="get_down()"/></p>
+    
+  
+  </div>
+  
+  
+  
+  <script>
+    const L0 = 43.36;
+	const L1 = 191.96;
+    const L2 = 117.63;
+    const L3 = 144.16;
+    var q1 = 0;
+    var q2 = 0;
+    var q3 = 0;
+    var x = 0;
+    var z = 0;
+    var alf = 0;	
+	var rq1el = document.getElementById("rq1");
+	var rq2el = document.getElementById("rq2");
+	var rq3el = document.getElementById("rq3");
+	var rxel = document.getElementById("rx");
+	var rzel = document.getElementById("rz");
+	var ralfel = document.getElementById("ralf");
+	var iq1el = document.getElementById("iq1");
+	var iq2el = document.getElementById("iq2");
+	var iq3el = document.getElementById("iq3");
+	var ixel = document.getElementById("ix");
+	var izel = document.getElementById("iz");
+	var ialfel = document.getElementById("ialf");	
+	
+	$.ajaxSetup({timeout:1000});
+	
+	function radians(grad){
+      return (grad * Math.PI) / 180;
+    }
+   
+    function get_up(){
+	  $.get("/?move=" + "up" + "&");
+	  {Connection: close};
+	}
+	
+	function get_down(){
+	  $.get("/?move=down&");
+	  {Connection: close};
+	}
+   
+    function get_q(q1, q2, q3){
+      var q1str = String(Math.round(q1/0.017453292))
+	  var q2str = String(Math.round(q2/0.017453292))
+	  var q3str = String(Math.round(q3/0.017453292))
+	  $.get("/?q1=" + q1str + "&q2=" + q2str + "&q3=" + q3str + "&");
+	  {Connection: close};
+	 
+    }
+   
+	
+	
+	function set_iq1(){  	  
+	  q1 = parseFloat(radians(rq1el.value));
+	  iq1el.value=rq1el.value;	
+	}	
+	function set_iq2(){
+	  q2 = parseFloat(radians(rq2el.value));
+	  iq2el.value=rq2el.value;		
+	}	
+	function set_iq3(){
+	  q3 = parseFloat(radians(rq3el.value));
+	  iq3el.value=rq3el.value;	
+	}	
+	function set_ix(){
+	  x=parseFloat(rxel.value);
+	  ixel.value=x;	
+	}	
+	function set_iz(){
+	  z=parseFloat(rzel.value);
+	  izel.value=z;	
+	}	
+	function set_ialf(){
+	  alf=parseFloat(radians(ralfel.value));
+	  ialfel.value=ralfel.value;  
+	}
+    function set_rq1(){  	  
+	  q1 = parseFloat(radians(iq1el.value));
+	  rq1el.value=iq1el.value;
+	}	
+	function set_rq2(){
+	  q2 = parseFloat(radians(iq2el.value));
+	  rq2el.value=iq2el.value;	
+	}	
+	function set_rq3(){
+	  q3 = parseFloat(radians(iq3el.value));
+	  rq3el.value=iq3el.value;	
+	}	
+	function set_rx(){
+	  x=parseFloat(ixel.value);
+	  rxel.value=x;	
+	}	
+	function set_rz(){
+	  z=parseFloat(izel.value);
+	  rzel.value=z;	
+	}	
+	function set_ralf(){
+	  alf=parseFloat(radians(ialfel.value));
+	  ralfel.value=ialfel.value;
+	}
+	
+	function set_joint(){
+
+	  var c1 = Math.cos(q1);
+      var c12 = Math.cos(q1 + q2);
+      var c123 = Math.cos(q1 + q2 + q3);
+
+      var s1 = Math.sin(q1);
+      var s12 = Math.sin(q1 + q2);
+      var s123 = Math.sin(q1 + q2 + q3);
+	 
+	  z = Math.round(L0 + L1 * c1 + L2 * c12 + L3 * c123);
+      x = Math.round(L1 * s1 + L2 * s12 + L3 * s123);
+	  if (((L1 * c1) < 0) || ((L1 * c1 + L2 * c12) < 0) || ((L1 * c1 + L2 * c12 + L3 * c123) < 0)){
+	    alert("Error!\n Joint's positions are incorrect.\n Please, repit input again.");
+   	  }
+	  else{
+
+	    alf = q1 + q2 + q3
+
+	    ixel.value=Math.round(x);
+	    izel.value=Math.round(z);
+	    ialfel.value= parseInt(rq1el.value) + parseInt(rq2el.value) + parseInt(rq3el.value);
+	    rxel.value=Math.round(x);
+	    rzel.value=Math.round(z);
+	    ralfel.value= parseInt(rq1el.value) + parseInt(rq2el.value) + parseInt(rq3el.value);
+	    get_q(q1, q2, q3);
+	  }
+	
+	
+	
+	
+	}
+	
+	function ik_solution(){
+	  if(Math.sqrt(x*x+z*z) < 37){
+	    alert("Error!\n End-effector's position are incorrect.\n Please, repit input again.")
+		}
+	  //console.log(alf);
+	  //console.log(alf / 0.017);
+	  else{
+	    var calf = Math.cos(alf);
+        var salf = Math.sin(alf);
+	    var x1 = z - L3 * calf - L0;
+	    var y1 = x - L3 * salf;
+	    var cq2 = (x1 * x1 + y1 * y1 - L1 * L1 - L2 * L2) / (2 * L1 * L2);
+	    var q02 = Math.acos(cq2);
+	  }
+	  if (!q02){
+	    alert("Error!\n End-effector's position are incorrect.\n Please, repit input again.")
+	  }
+	  else{
+	  
+	    if (x < 0){
+	      var q002 = -Math.abs(q02);
+	    }
+	    else{
+	      var q002 = Math.abs(q02);
+	    }
+	  
+	    var c2 = Math.cos(q002);
+        var s2 = Math.sin(q002);
+	  
+	    var K = L1 + L2 * c2;
+	    var D = (y1 * L2 * s2) * (y1 * L2 * s2) - (L2 * L2 * s2 * s2 + K * K) * (y1 * y1 - K * K);
+	    var cq1_1 = ((y1 * L2 * s2) + Math.sqrt(D)) / (L2 * L2 * s2 * s2 + K * K);
+	    var cq1_2 = ((y1 * L2 * s2) - Math.sqrt(D)) / (L2 * L2 * s2 * s2 + K * K);
+	  
+	    var q1_11 = Math.acos(cq1_1);
+        var q1_12 = -q1_11;
+	    var q001 = q1_11;
+	    var q003 = alf - q001 - q002;
+	  
+	    var yn = L1 * Math.sin(q001) + L2 * Math.sin(q001 + q002) + L3 * Math.sin(q001 + q002 + q003);
+        var xn = L0 + L1 * Math.cos(q001) + L2 * Math.cos(q001 + q002) + L3 * Math.cos(q001 + q002 + q003);
+	    //console.log((z==Math.round(xn) && x==Math.round(yn)), z==Math.round(xn), Math.round(xn), z);
+	    if (z==Math.round(xn) && x==Math.round(yn)){
+	      q1 = q001;
+	      q2 = q002;
+		  q3 = q003;
+	    }
+	    else{
+	      q001 = q1_12;
+	      q003 = alf - q001 - q002;
+	      yn = L1 * Math.sin(q001) + L2 * Math.sin(q001 + q002) + L3 * Math.sin(q001 + q002 + q003);
+          xn = L0 + L1 * Math.cos(q001) + L2 * Math.cos(q001 + q002) + L3 * Math.cos(q001 + q002 + q003);
+		  q1 = q001;
+		  q2 = q002;
+		  q3 = q003;
+	    }
+	    console.log(q1, q2, q3);
+	    rq1.value=Math.round(q1 / 0.017453292);
+	    rq2.value=Math.round(q2 / 0.017453292);
+	    rq3.value=Math.round(q3 / 0.017453292);
+	    iq1.value=Math.round(q1 / 0.017453292);
+	    iq2.value=Math.round(q2 / 0.017453292);
+	    iq3.value=Math.round(q3 / 0.017453292);
+	  }
+	  
+
+	  
+	  //console.log(calf, salf, x1, y1);
+	 // console.log(cq2, q002, K, D, cq1_1, cq1_2);
+	  //console.log(q1_11, q1_12);
+	  
+	  
+	}
+
+  </script>
+</body>
+</html>

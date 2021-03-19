@@ -6,8 +6,8 @@ Servo servo2;
 Servo servo3;
 Servo servo4;
 
-const char* ssid     = "iGarage";//"a407";"a202";
-const char* password = "igarage18";//"Xqwert1!";"gamma113";
+const char* ssid     = "a407";//"iGarage";"a202";
+const char* password = "Xqwert1!";//"igarage18";"gamma113";
 
 WiFiServer server(80);
 
@@ -25,7 +25,46 @@ int pos2 = 0;
 int pwe1control = 1520;
 int pwe2control = 1520;
 int pwe3control = 1520;
-
+void dg_in_pwe(int deg1, int deg2, int deg3){
+	int mid = 1520;
+ Serial.println(deg1);
+ Serial.println(deg2);
+ Serial.println(deg3);
+	int pwe1 = mid + deg1 * 10.3529412;
+	int pwe2 = mid - deg2 * 10.3529412;
+	int pwe3 = mid + deg3 * 10.3529412;
+ 
+	for (int i = 0; i < 200; i++){
+		servo1.writeMicroseconds(pwe1control);
+		servo2.writeMicroseconds(pwe2control);
+		servo3.writeMicroseconds(pwe3control);
+	if (pwe1control > pwe1){
+		pwe1control = pwe1control - 5;
+		}
+	if (pwe1control < pwe1){
+		pwe1control = pwe1control + 5;
+		}
+	if (pwe2control > pwe2){
+		pwe2control = pwe2control - 5;
+		}
+	if (pwe2control < pwe2){
+		pwe2control = pwe2control + 5;
+		}
+	if (pwe3control > pwe3){
+		pwe3control = pwe3control - 5;
+		}
+	if (pwe3control < pwe3){
+		pwe3control = pwe3control + 5;
+		}
+  delay(50);
+	}
+  //pwe1control = pwe1;
+  //servo1.writeMicroseconds(pwe1control);
+  //pwe2control = pwe2;
+  //servo2.writeMicroseconds(pwe2control);
+  //pwe3control = pwe3;
+  //servo3.writeMicroseconds(pwe3control);
+}
 void dg_in_pwe3(int deg){
 float mid = 1520;
 int pwe3 = mid + deg * 10.3529412;
@@ -84,7 +123,7 @@ int pwe1 = mid + deg * 10.3529412;
 if (pwe1control > pwe1){
 	while (pwe1control > pwe1){
 		servo1.writeMicroseconds(pwe1control);
-    Serial.println(pwe1control);
+    //Serial.println(pwe1control);
 		pwe1control = pwe1control - 5 ;
 		delay(50);
 	}
@@ -95,7 +134,7 @@ if (pwe1control > pwe1){
 else {
 	while (pwe1control < pwe1){
 		servo1.writeMicroseconds(pwe1control);
-		Serial.println(pwe1control);
+		//Serial.println(pwe1control);
 		pwe1control = pwe1control + 5 ;
 		delay(50);
 	}
@@ -452,9 +491,10 @@ void loop() {
               valueStringq3 = header.substring(pos1+3, pos2);
               Serial.println(valueStringq3);
               // вращаем ось сервомотора:			  
-			  dg_in_pwe3(valueStringq3.toInt());
-			  dg_in_pwe2(valueStringq2.toInt());
-			  dg_in_pwe1(valueStringq1.toInt());
+			  int deg3 = valueStringq3.toInt();
+			  int deg2 = valueStringq2.toInt();
+			  int deg1 = valueStringq1.toInt();
+			  dg_in_pwe(deg1, deg2, deg3);
 			  //servo1.writeMicroseconds(valueStringq1.toInt());
 			  //servo2.writeMicroseconds(valueStringq2.toInt());
 			  //servo3.writeMicroseconds(valueStringq3.toInt());

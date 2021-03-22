@@ -6,8 +6,8 @@ Servo servo2;
 Servo servo3;
 Servo servo4;
 
-const char* ssid     = "a407";//"iGarage";"a202";
-const char* password = "Xqwert1!";//"igarage18";"gamma113";
+const char* ssid     = "iGarage";
+const char* password = "igarage18";
 
 WiFiServer server(80);
 

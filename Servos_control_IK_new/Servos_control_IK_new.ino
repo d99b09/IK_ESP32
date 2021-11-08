@@ -179,6 +179,8 @@ void loop() {
 			String responseHTML = "<!DOCTYPE html><html><head><meta name='viewport' content='width=device-width, initial-scale=1'><link rel='icon' href='data:;base64,='>"
   "<title>ServoGUI</title><style>"
   "body{font-size: 32px; }"
+  "  input{font-size : 24px;}"
+  "input[type="text"]{width: 50px;}"
   ".Inf{font-size: 24px; } "
 
   
@@ -311,7 +313,7 @@ void loop() {
  " <p><input type='button' value='IK solution' onclick='ik_solution()'/></p></div>"
 "  <div><p><input type='button' value='Up' onclick='get_up()'/></p>"
  " <p><input type='button' value='Down' onclick='get_down()'/></p></div>"
- " <div><h2 align='center' >Control board<a href='#main'><sup>&#128712;</sup></a></h2></div>"
+ " <div><h2 align='center' >Control board<a href='#main'><sup>info</sup></a></h2></div>"
 
      
    

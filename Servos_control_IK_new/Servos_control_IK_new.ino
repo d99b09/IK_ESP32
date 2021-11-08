@@ -180,7 +180,7 @@ void loop() {
   "<title>ServoGUI</title><style>"
   "body{font-size: 32px; }"
   "  input{font-size : 24px;}"
-  "input[type="text"]{width: 50px;}"
+  "input[type='text']{width: 50px;}"
   ".Inf{font-size: 24px; } "
 
   
